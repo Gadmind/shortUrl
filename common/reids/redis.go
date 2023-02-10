@@ -63,6 +63,17 @@ func Set(value, key string, timestamp time.Duration) {
 	}
 }
 
+// Del 从Redis删除Key
+func Del(key string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, err := redisClient.Del(ctx, key).Result()
+	if err != nil {
+		log.Println("删除", key, "失败:", err)
+		return
+	}
+}
+
 // HSet 保存到hash
 func HSet(key, field string, value interface{}) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

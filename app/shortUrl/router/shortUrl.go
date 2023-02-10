@@ -2,6 +2,7 @@ package router
 
 import (
 	"ShortUrl/app/shortUrl/models"
+	"ShortUrl/app/shortUrl/models/dto"
 	"ShortUrl/common/binary"
 	"ShortUrl/common/constant"
 	"ShortUrl/common/rand"
@@ -12,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
+	"strings"
 )
 
 // GenerateUrl 生成短连接URL
@@ -42,4 +44,37 @@ func Redirect(context *gin.Context) {
 	}
 	n := fmt.Sprintf("%s", value)
 	context.Redirect(http.StatusFound, n)
+}
+
+// AnalysisUrl 解析短URL
+func AnalysisUrl(context *gin.Context) {
+	url := dto.UrlDTOPool.Get().(*dto.UrlDTO)
+	defer url.Free()
+	body, _ := io.ReadAll(context.Request.Body)
+	_ = json.Unmarshal(body, &url)
+
+	urls := strings.Split(url.RefUrl, "/")
+	refCode := urls[len(urls)-1]
+	originUrl := reids.Get(constant.SSOPrefix + refCode)
+	if originUrl == "" {
+		context.JSON(resp.SuccessNoData("该链接不存在或已失效"))
+	}
+	context.JSON(resp.Success("解析成功", originUrl))
+}
+
+// DeleteUrl 删除URL
+func DeleteUrl(context *gin.Context) {
+	url := dto.UrlDTOPool.Get().(*dto.UrlDTO)
+	defer url.Free()
+	body, _ := io.ReadAll(context.Request.Body)
+	_ = json.Unmarshal(body, &url)
+	urls := strings.Split(url.RefUrl, "/")
+	refCode := urls[len(urls)-1]
+	originUrl := reids.Get(constant.SSOPrefix + refCode)
+	if originUrl == "" {
+		context.JSON(resp.SuccessNoData("该链接不存在或已删除"))
+	}
+	reids.Del(constant.SSOPrefix + refCode)
+	reids.Del(constant.SOSPrefix + originUrl)
+	context.JSON(resp.SuccessNoData("该链接已删除"))
 }
