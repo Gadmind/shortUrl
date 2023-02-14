@@ -3,6 +3,7 @@ package main
 import (
 	"ShortUrl/app/shortUrl/router"
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"net/http"
 )
