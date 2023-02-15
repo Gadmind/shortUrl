@@ -32,7 +32,7 @@ func GenerateUrl(context *gin.Context) {
 		reids.Set(originUrl, constant.SSOPrefix+refCode, 0)
 		// TODO 入库保存
 	}
-	context.JSON(resp.Success("生成成功", refCode))
+	context.JSON(resp.Success("生成成功", context.Request.Host+"/"+refCode))
 }
 
 // Redirect 短链接重定向
