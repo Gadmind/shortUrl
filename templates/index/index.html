@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-    <title>Element Plus demo</title>
+    <title>短链接生成器</title>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.bootcss.com/qs/6.7.0/qs.min.js"></script>
     <!-- Import style -->
@@ -31,8 +31,11 @@
                 </el-col>
             </el-row>
             <el-row :gutter="10">
-                <el-col :span="10">
-                    <el-input v-model="shortUrl" disabled/>
+                <el-col :span="8">
+                    <el-input id="shortUrl" v-model="shortUrl" disabled/>
+                </el-col>
+                <el-col :span="2">
+                    <el-button type="primary" @click="copy(this)">复制到剪切板</el-button>
                 </el-col>
             </el-row>
         </el-main>
@@ -53,9 +56,19 @@
                 axios.post("/add", {
                     "originUrl": this.message
                 }).then(resp => {
-                    // console.log(resp)
                     this.shortUrl = resp.data.data
                 })
+            },
+            copy() {
+                const range = document.createRange();
+                range.selectNode(document.getElementById('shortUrl'));
+                const selection = window.getSelection();
+                //移除之前选中内容
+                if (selection.rangeCount>0) selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('copy');
+                alert("复制成功！");
+                selection.removeAllRanges()
             }
         }
     }).use(ElementPlus).mount('#app')
