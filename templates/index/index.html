@@ -22,14 +22,16 @@
 <div id="app">
     <el-container>
         <el-main>
+
             <el-row :gutter="10">
                 <el-col :span="8">
-                    <el-input v-model="message" placeholder="请输入要转换的网址"/>
+                    <el-input v-model="convertUrl" placeholder="请输入要转换的网址"/>
                 </el-col>
                 <el-col :span="2">
                     <el-button type="primary" @click="click">生成短链接</el-button>
                 </el-col>
             </el-row>
+
             <el-row :gutter="10">
                 <el-col :span="8">
                     <el-input id="shortUrl" v-model="shortUrl" disabled/>
@@ -38,6 +40,26 @@
                     <el-button type="primary" @click="copy(this)">复制到剪切板</el-button>
                 </el-col>
             </el-row>
+
+            <el-row :gutter="10">
+                <el-col :span="8">
+                    <el-input v-model="analysisUrl" placeholder="请输入要解析的网址"/>
+                </el-col>
+                <el-col :span="2">
+                    <el-button type="primary" @click="analysis">解析短链接</el-button>
+                </el-col>
+            </el-row>
+
+
+            <el-row :gutter="10">
+                <el-col :span="8">
+                    <el-input v-model="deleteUrl" placeholder="请输入要删除的网址"/>
+                </el-col>
+                <el-col :span="2">
+                    <el-button type="primary" @click="deleteUrl">删除短链接</el-button>
+                </el-col>
+            </el-row>
+
         </el-main>
     </el-container>
 </div>
@@ -47,16 +69,33 @@
         delimiters: ['[[', ']]'],
         data() {
             return {
-                message: '',
+                convertUrl: '',
+                analysisUrl: '',
+                deleteUrl: '',
                 shortUrl: '',
             }
         },
         methods: {
             click(event) {
                 axios.post("/add", {
-                    "originUrl": this.message
+                    "originUrl": this.convertUrl
                 }).then(resp => {
                     this.shortUrl = resp.data.data
+                })
+            },
+            analysis(event) {
+                axios.post("/analysis", {
+                    "refUrl": this.analysisUrl
+                }).then(resp => {
+                    this.shortUrl = resp.data.data
+                    alert(resp.data.message)
+                })
+            },
+            deleteUrl(event) {
+                axios.post("/delete", {
+                    "refUrl": this.deleteUrl
+                }).then(resp => {
+                    alert(resp.data.message)
                 })
             },
             copy() {
@@ -64,7 +103,7 @@
                 range.selectNode(document.getElementById('shortUrl'));
                 const selection = window.getSelection();
                 //移除之前选中内容
-                if (selection.rangeCount>0) selection.removeAllRanges();
+                if (selection.rangeCount > 0) selection.removeAllRanges();
                 selection.addRange(range);
                 document.execCommand('copy');
                 alert("复制成功！");
