@@ -24,6 +24,11 @@ func GenerateUrl(context *gin.Context) {
 	_ = json.Unmarshal(body, &urlInfo)
 
 	originUrl := urlInfo.OriginUrl
+	if !(strings.HasPrefix(originUrl, "https://") || strings.HasPrefix(originUrl, "http://")) {
+		context.JSON(resp.ReNoData(200, false, "链接格式不正确"))
+		return
+	}
+
 	refCode := reids.Get(constant.SOSPrefix + originUrl)
 	if refCode == "" {
 		randomId := rand.GetRandomId()

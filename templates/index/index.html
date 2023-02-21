@@ -28,7 +28,7 @@
                     <el-input v-model="convertUrl" placeholder="请输入要转换的网址"/>
                 </el-col>
                 <el-col :span="2">
-                    <el-button type="primary" @click="click">生成短链接</el-button>
+                    <el-button type="primary" @click="generate">生成短链接</el-button>
                 </el-col>
             </el-row>
 
@@ -76,11 +76,17 @@
             }
         },
         methods: {
-            click(event) {
+            generate(event) {
                 axios.post("/add", {
                     "originUrl": this.convertUrl
                 }).then(resp => {
-                    this.shortUrl = resp.data.data
+                    console.log(resp)
+                    let data = resp.data;
+                    if (!data.success) {
+                        alert(data.message)
+                        console.log(resp)
+                    }
+                    this.shortUrl = data.data
                 })
             },
             analysis(event) {
