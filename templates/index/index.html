@@ -80,11 +80,9 @@
                 axios.post("/add", {
                     "originUrl": this.convertUrl
                 }).then(resp => {
-                    console.log(resp)
                     let data = resp.data;
                     if (!data.success) {
                         alert(data.message)
-                        console.log(resp)
                     }
                     this.shortUrl = data.data
                 })
@@ -93,15 +91,25 @@
                 axios.post("/analysis", {
                     "refUrl": this.analysisUrl
                 }).then(resp => {
-                    this.shortUrl = resp.data.data
-                    alert(resp.data.message)
+                    let data = resp.data;
+                    if (!data.success) {
+                        alert(data.message)
+                    } else {
+                        this.shortUrl = resp.data.data
+                        alert(resp.data.message)
+                    }
                 })
             },
             deleteUrl(event) {
                 axios.post("/delete", {
                     "refUrl": this.deleteUrl
                 }).then(resp => {
-                    alert(resp.data.message)
+                    let data = resp.data;
+                    if (!data.success) {
+                        alert(data.message)
+                    } else {
+                        alert(data.message)
+                    }
                 })
             },
             copy() {

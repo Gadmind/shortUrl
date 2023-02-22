@@ -57,8 +57,12 @@ func AnalysisUrl(context *gin.Context) {
 	defer url.Free()
 	body, _ := io.ReadAll(context.Request.Body)
 	_ = json.Unmarshal(body, &url)
-
-	urls := strings.Split(url.RefUrl, "/")
+	refUrl := url.RefUrl
+	if !(strings.HasPrefix(refUrl, "https://") || strings.HasPrefix(refUrl, "http://")) {
+		context.JSON(resp.ReNoData(200, false, "链接格式不正确"))
+		return
+	}
+	urls := strings.Split(refUrl, "/")
 	refCode := urls[len(urls)-1]
 	originUrl := reids.Get(constant.SSOPrefix + refCode)
 	if originUrl == "" {
@@ -73,7 +77,12 @@ func DeleteUrl(context *gin.Context) {
 	defer url.Free()
 	body, _ := io.ReadAll(context.Request.Body)
 	_ = json.Unmarshal(body, &url)
-	urls := strings.Split(url.RefUrl, "/")
+	refUrl := url.RefUrl
+	if !(strings.HasPrefix(refUrl, "https://") || strings.HasPrefix(refUrl, "http://")) {
+		context.JSON(resp.ReNoData(200, false, "链接格式不正确"))
+		return
+	}
+	urls := strings.Split(refUrl, "/")
 	refCode := urls[len(urls)-1]
 	originUrl := reids.Get(constant.SSOPrefix + refCode)
 	if originUrl == "" {
