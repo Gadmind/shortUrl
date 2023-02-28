@@ -1,8 +1,6 @@
-package router
+package short_url
 
 import (
-	"ShortUrl/app/shortUrl/models"
-	"ShortUrl/app/shortUrl/models/dto"
 	"ShortUrl/common/binary"
 	"ShortUrl/common/constant"
 	"ShortUrl/common/rand"
@@ -18,7 +16,7 @@ import (
 
 // GenerateUrl 生成短连接URL
 func GenerateUrl(context *gin.Context) {
-	urlInfo := models.UrlInfoPool.Get().(*models.UrlInfo)
+	urlInfo := UrlInfoPool.Get().(*UrlInfo)
 	defer urlInfo.Free()
 	body, _ := io.ReadAll(context.Request.Body)
 	_ = json.Unmarshal(body, &urlInfo)
@@ -36,6 +34,8 @@ func GenerateUrl(context *gin.Context) {
 		reids.Set(refCode, constant.SOSPrefix+originUrl, 0)
 		reids.Set(originUrl, constant.SSOPrefix+refCode, 0)
 		// TODO 入库保存
+		urlInfo.RefCode = refCode
+		SaveUrlInfo(urlInfo)
 	}
 	context.JSON(resp.Success("生成成功", context.Request.Host+"/"+refCode))
 }
@@ -53,7 +53,7 @@ func Redirect(context *gin.Context) {
 
 // AnalysisUrl 解析短URL
 func AnalysisUrl(context *gin.Context) {
-	url := dto.UrlDTOPool.Get().(*dto.UrlDTO)
+	url := UrlDTOPool.Get().(*UrlDTO)
 	defer url.Free()
 	body, _ := io.ReadAll(context.Request.Body)
 	_ = json.Unmarshal(body, &url)
@@ -73,7 +73,7 @@ func AnalysisUrl(context *gin.Context) {
 
 // DeleteUrl 删除URL
 func DeleteUrl(context *gin.Context) {
-	url := dto.UrlDTOPool.Get().(*dto.UrlDTO)
+	url := UrlDTOPool.Get().(*UrlDTO)
 	defer url.Free()
 	body, _ := io.ReadAll(context.Request.Body)
 	_ = json.Unmarshal(body, &url)
@@ -91,4 +91,9 @@ func DeleteUrl(context *gin.Context) {
 	reids.Del(constant.SSOPrefix + refCode)
 	reids.Del(constant.SOSPrefix + originUrl)
 	context.JSON(resp.SuccessNoData("该链接已删除"))
+}
+
+func GetList(context *gin.Context) {
+	infos := GetUrlInfo()
+	context.JSON(resp.Success("操作成功", infos))
 }
