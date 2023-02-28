@@ -28,7 +28,7 @@
                     <el-input v-model="convertUrl" placeholder="请输入要转换的网址"/>
                 </el-col>
                 <el-col :span="2">
-                    <el-button type="primary" @click="generate">生成短链接</el-button>
+                    <el-button type="primary" @click="generateFunc">生成短链接</el-button>
                 </el-col>
             </el-row>
 
@@ -37,7 +37,7 @@
                     <el-input id="shortUrl" v-model="shortUrl" disabled/>
                 </el-col>
                 <el-col :span="2">
-                    <el-button type="primary" @click="copy(this)">复制到剪切板</el-button>
+                    <el-button type="primary" @click="copyFunc(this)">复制到剪切板</el-button>
                 </el-col>
             </el-row>
 
@@ -46,7 +46,7 @@
                     <el-input v-model="analysisUrl" placeholder="请输入要解析的网址"/>
                 </el-col>
                 <el-col :span="2">
-                    <el-button type="primary" @click="analysis">解析短链接</el-button>
+                    <el-button type="primary" @click="analysisFunc">解析短链接</el-button>
                 </el-col>
             </el-row>
 
@@ -56,7 +56,7 @@
                     <el-input v-model="deleteUrl" placeholder="请输入要删除的网址"/>
                 </el-col>
                 <el-col :span="2">
-                    <el-button type="primary" @click="deleteUrl">删除短链接</el-button>
+                    <el-button type="primary" @click="deleteUrlFunc">删除短链接</el-button>
                 </el-col>
             </el-row>
 
@@ -76,7 +76,7 @@
             }
         },
         methods: {
-            generate(event) {
+            generateFunc(event) {
                 axios.post("/add", {
                     "originUrl": this.convertUrl
                 }).then(resp => {
@@ -85,9 +85,11 @@
                         alert(data.message)
                     }
                     this.shortUrl = data.data
+                }).catch(() => {
+                    console.log("err")
                 })
             },
-            analysis(event) {
+            analysisFunc(event) {
                 axios.post("/analysis", {
                     "refUrl": this.analysisUrl
                 }).then(resp => {
@@ -98,9 +100,11 @@
                         this.shortUrl = resp.data.data
                         alert(resp.data.message)
                     }
+                }).catch(() => {
+                    console.log("err")
                 })
             },
-            deleteUrl(event) {
+            deleteUrlFunc(event) {
                 axios.post("/delete", {
                     "refUrl": this.deleteUrl
                 }).then(resp => {
@@ -110,9 +114,11 @@
                     } else {
                         alert(data.message)
                     }
+                }).catch(() => {
+                    console.log("err")
                 })
             },
-            copy() {
+            copyFunc() {
                 const range = document.createRange();
                 range.selectNode(document.getElementById('shortUrl'));
                 const selection = window.getSelection();
