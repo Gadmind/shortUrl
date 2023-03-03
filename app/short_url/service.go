@@ -97,3 +97,9 @@ func GetList(context *gin.Context) {
 	infos := GetUrlInfo()
 	context.JSON(resp.Success("操作成功", infos))
 }
+
+func Delete(context *gin.Context) {
+	info := &UrlInfo{RefCode: "1"}
+	DeleteUrlInfo(info)
+	context.JSON(resp.SuccessNoData("操作成功"))
+}

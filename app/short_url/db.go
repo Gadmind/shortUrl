@@ -44,3 +44,14 @@ func UpdatePageViewInfo(ui *UrlInfo) {
 	id, err := rs.LastInsertId()
 	log.Printf("插入新数据ID%d", id)
 }
+
+func DeleteUrlInfo(ui *UrlInfo) {
+	conn := db.MySQLDatabase()
+	rs, err := conn.Exec("DELETE FROM url_info WHERE ref_code = ?", ui.RefCode)
+	if err != nil {
+		log.Println("插入新数据出错", err)
+		return
+	}
+	id, err := rs.LastInsertId()
+	log.Printf("插入新数据ID%d", id)
+}

@@ -25,6 +25,7 @@ func API() {
 	serverDefault.POST("/analysis", short_url.AnalysisUrl)
 	serverDefault.POST("/delete", short_url.DeleteUrl)
 	serverDefault.GET("/list", short_url.GetList)
+	serverDefault.GET("/url/Delete", short_url.Delete)
 
 	server := &http.Server{
 		Addr:    ":8088",
