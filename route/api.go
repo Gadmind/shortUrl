@@ -21,11 +21,12 @@ func API() {
 		})
 	})
 	serverDefault.GET("/:path", short_url.Redirect)
-	serverDefault.POST("/add", short_url.GenerateUrl)
-	serverDefault.POST("/analysis", short_url.AnalysisUrl)
-	serverDefault.POST("/delete", short_url.DeleteUrl)
-	serverDefault.GET("/list", short_url.GetList)
+	serverDefault.POST("/url/add", short_url.GenerateUrl)
+	serverDefault.POST("/url/analysis", short_url.AnalysisUrl)
+	serverDefault.POST("/url/delete", short_url.DeleteUrl)
+	serverDefault.GET("/url/list", short_url.GetList)
 	serverDefault.GET("/url/Delete", short_url.Delete)
+	serverDefault.GET("/url/rank", short_url.Delete)
 
 	server := &http.Server{
 		Addr:    ":8088",
