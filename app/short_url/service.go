@@ -103,3 +103,8 @@ func Delete(context *gin.Context) {
 	DeleteUrlInfo(info)
 	context.JSON(resp.SuccessNoData("操作成功"))
 }
+
+func GetUrlRank(context *gin.Context) {
+	infos := PageViewRank()
+	context.JSON(resp.Success("操作成功", infos))
+}
